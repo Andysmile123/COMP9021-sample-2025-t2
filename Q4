@@ -1,0 +1,38 @@
+def is_word_word_ladder(word_1, word_2, candidate_ladder):
+    # 获取全局变量
+    global lexicon, closest_words
+
+    # Step 1: 检查头尾
+    if not candidate_ladder or candidate_ladder[0] != word_1 or candidate_ladder[-1] != word_2:
+        return False
+
+    # Step 2: 所有单词在字典中
+    if not all(word in lexicon for word in candidate_ladder):
+        return False
+
+    # Step 3: 每一对相邻单词只差一个字母
+    for w1, w2 in zip(candidate_ladder, candidate_ladder[1:]):
+        # 利用 closest_words 判断是否一字之差
+        if w2 not in closest_words[w1]:
+            return False
+
+    # Step 4: 用BFS找最短路径长度
+    def bfs(start, end):
+        if start == end:
+            return 1
+        visited = set()
+        queue = deque([(start, 1)])  # (当前单词, 当前步数)
+        while queue:
+            current, dist = queue.popleft()
+            if current == end:
+                return dist
+            visited.add(current)
+            for neighbor in closest_words[current]:
+                if neighbor not in visited:
+                    queue.append((neighbor, dist + 1))
+                    visited.add(neighbor)
+        return float('inf')  # 找不到路径
+
+    shortest_length = bfs(word_1, word_2)
+    # candidate_ladder长度必须等于最短长度
+    return len(candidate_ladder) == shortest_length
