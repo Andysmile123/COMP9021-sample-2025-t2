@@ -1,0 +1,16 @@
+def keep_every_second_element(self):
+    if not self.head or self.head == self.tail:
+        # 空链表或只有一个节点，不需要处理
+        return
+    current = self.head
+    while current and current.next_node:
+        node_to_remove = current.next_node
+        # 跳过下一个节点
+        current.next_node = node_to_remove.next_node
+        if node_to_remove.next_node:
+            node_to_remove.next_node.previous_node = current
+        else:
+            # 被删的是尾节点，更新self.tail
+            self.tail = current
+        # current指针往后移一步
+        current = current.next_node
